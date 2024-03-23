@@ -46,35 +46,36 @@ class Player(Sprite):
 class Enemy(Sprite):
     def __init__(self, sprite_image, x, y, sprite_width, sprite_height, sprite_speed):
         super().__init__(sprite_image, x, y, sprite_width, sprite_height, sprite_speed)
+
+        monsters = sprite.Group()
+        monsters.add(monster)
     
     def move(self):
-        if self.rect.y < 0:
-            self.rect.y = HEIGHT
-            self.rect.x = randint(0,WIDTH)
-
+        self.rect.y += self.speed
+    
         if self.rect.y > HEIGHT:
             self.rect.y = 0
             self.rect.x = randint(0,WIDTH)
+
+        # if self.rect.y < 0:
+        #     self.rect.y = HEIGHT
+        #     self.rect.x = randint(0,WIDTH)
             
-        if self.rect.x < 0:
-            self.rect.x = WIDTH
-            self.rect.y = randint(0,HEIGHT)
+        # if self.rect.x < 0:
+        #     self.rect.x = WIDTH
+        #     self.rect.y = randint(0,HEIGHT)
         
-        if self.rect.x < WIDTH:
-            self.rect.x = 0
-            self.rect.y = randint(0,HEIGHT)                                                                               
-        
-
-        # monsters = sprite.Group()
-        # monsters.add(monster)
-
-    
+        # if self.rect.x < WIDTH:
+        #     self.rect.x = 0
+        #     self.rect.y = randint(0,HEIGHT)                                                                                
 
 player = Player(player_image,400,500,100,70,5)
-monsters = Enemy(alien_image,)
-
-
-
+monsters = Enemy(alien_image,700,200,70,70,7)
+# monster1 = Enemy(alien_image,500,600,70,70,7)
+# monster2 = Enemy(alien_image,250,250,70,70,7)
+# monster3 = Enemy(alien_image,50,450,70,70,7)
+# monster4 = Enemy(alien_image,350,100,70,70,7)
+# monster5 = Enemy(alien_image,700,50,70,70,7)
 
 while run:
     for e in event.get():
@@ -85,5 +86,15 @@ while run:
     player.update()
     monsters.move()
     monsters.draw(window)
+    # monster1.draw(window)
+    # monster2.draw(window)
+    # monster3.draw(window)
+    # monster4.draw(window)
+    # monster5.draw(window)
+    # monster1.move()
+    # monster2.move()
+    # monster3.move()
+    # monster4.move()
+    # monster5.move()
     display.update()
     clock.tick(FPS)

@@ -25,6 +25,7 @@ background = transform.scale(background,(WIDTH ,HEIGHT  ))
 player_image =image.load("spaceship.png")
 alien_image = image.load("alien.png")
 fire_image = image.load("fire.png")
+asteroid_image = image.load("asteroid.png")
 
 class Sprite(sprite.Sprite):
     def __init__(self, sprite_image,x,y,sprite_width,sprite_height,sprite_speed) -> None:
@@ -90,12 +91,26 @@ class Bullet(Sprite):
         self.rect.y -= self.speed
         if self.rect.bottom < 0:
             self.kill()
+
+class Asteroid(Sprite):
+    def __init__(self, sprite_image, sprite_width, sprite_height, sprite_speed) -> None:
+        rand_x = randint(0,WIDTH - 70)
+        super().__init__(sprite_image,rand_x,-100 ,sprite_width, sprite_height, sprite_speed)
+        
+        asteroids.add()
+    def update(self):
+        self.rect.y -= self.speed
+        if self.rect.bottom > HEIGHT:
+            self.kill()    
+
+
                 
 def start_game():
-    global monsters,player,bullets,label,hp_label,points_label,finish
+    global monsters,player,bullets,asteroids,label,hp_label,points_label,finish
     player = Player(player_image,400,500,100,70,5)
     monsters = sprite.Group()
     bullets = sprite.Group()
+    asteroids = sprite.Group()
     label = font1.render("Lost: "+ str(player.lost),1,(255,255,255))
     hp_label =  font1.render("Hp: "+ str(player.hp),1,(255,255,255))
     points_label =  font1.render("Points: "+ str(player.points),1,(255,255,255))
@@ -135,6 +150,14 @@ while run:
             Enemy(alien_image,70,70,7)
             spawn_time = time.get_ticks()
             interval_spawn = randint(1000,5000)
+        
+        if now - spawn_time > interval_spawn:
+            Asteroid(asteroid_image,100,100,6)
+            spawn_time = time.get_ticks()
+            interval_spawn = randint(1000,7000)
+
+        
+        
 
         colides_hits  = sprite.spritecollide(player,monsters,True,sprite.collide_mask)     
         if colides_hits:
@@ -151,14 +174,30 @@ while run:
             finish = True
 
 
+        colides_hits_2 = sprite.spritecollide(player,asteroids,True,sprite.collide_mask)  
+        if colides_hits_2:
+            player.hp -= 50
+            # if player.hp <= 0:
+            #     player.hp = 0
+            #     finish = True
+            #     hp_label =  font1.render("Hp: "+ str(player.hp),1,(255,255,255))
+
+
+              
         sprites_list = sprite.groupcollide(monsters,bullets,True,True, sprite.collide_mask)
         for hit in sprites_list:
             player.points += 10
             points_label =  font1.render("Points: "+ str(player.points),1,(255,255,255))
 
+
+        sprites_list_2 = sprite.groupcollide(asteroids,monsters,True,True,sprite.collide_mask)
+        for hit in sprites_list_2:
+            monsters.kill()
+
         player.update()
         monsters.update()
         bullets.update()
+        asteroids.update()
 
 
     window.blit(background,(0,0))
@@ -166,6 +205,9 @@ while run:
    
     monsters.draw(window)
     bullets.draw(window)
+    asteroids.draw(window)
+    
+
     window.blit(label,(20,20))
     window.blit(hp_label,(20,60))
     window.blit(points_label,(WIDTH - 150,20))
